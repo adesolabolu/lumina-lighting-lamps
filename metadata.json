@@ -1,0 +1,6 @@
+{
+  "name": "Lumina | Architectural Lighting & Designer Lamps",
+  "description": "Afro-modernist architectural lighting crafted for Nigerian luxury homes, penthouses, and hospitality spaces. Hand-cast bronze, kiln-dried Nigerian Iroko, and surge-protected warm LEDs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,1464 @@
+Below is the component for your context <!DOCTYPE html><html lang="en"><head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Lumina | Architectural Lighting &amp; Designer Lamps</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600&amp;family=Playfair+Display:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
+  <!-- Satoshi Font -->
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@700,500,300,400&amp;display=swap" rel="stylesheet">
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  
+  <style>
+    /* Custom Utilities */
+    .animate-on-scroll-hidden {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 1.2s cubic-bezier(0.2, 0, 0.2, 1), transform 1.2s cubic-bezier(0.2, 0, 0.2, 1);
+    }
+    .animate-on-scroll-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Word-by-Word Reveal Animation */
+    .word-reveal {
+      display: inline-block;
+      opacity: 0;
+      transform: translateX(-20px);
+      transition: opacity 0.4s cubic-bezier(0.2, 0, 0.2, 1), transform 0.4s cubic-bezier(0.2, 0, 0.2, 1);
+      white-space: pre;
+    }
+    .word-reveal.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    
+    .marquee-container {
+      overflow: hidden;
+      white-space: nowrap;
+      display: flex;
+    }
+    
+    .marquee-content {
+      display: flex;
+      gap: 2rem;
+      min-width: 100%;
+      animation: marquee 30s linear infinite;
+    }
+
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* Flip Card Specific Styles */
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+    .rotate-y-180 {
+      transform: rotateY(180deg);
+    }
+    .preserve-3d {
+      transform-style: preserve-3d;
+    }
+    .backface-hidden {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    .flip-card:hover .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    /* Mobile Menu Fade - Specificity fix for Tailwind #app-root strategy */
+    #app-root .mobile-menu-open {
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      visibility: visible !important;
+    }
+  </style>
+   
+<style type="text/tailwindcss">@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .card-hover-effect {
+    @apply transition-all duration-300 ease-out;
+  }
+  .card-hover-effect:hover {
+    @apply -translate-y-1 shadow-card;
+  }
+  
+  .framer-grid-layout {
+    @apply grid grid-cols-1 md:grid-cols-6 gap-4;
+  }
+}
+
+/* Custom Scroll Animations */
+.animate-on-scroll-hidden {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1.2s cubic-bezier(0.2, 0, 0.2, 1), transform 1.2s cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+.animate-on-scroll-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Marquee Styles */
+.marquee-container {
+  overflow: hidden;
+  white-space: nowrap;
+  display: flex;
+}
+
+.marquee-content {
+  display: flex;
+  gap: 2rem;
+  min-width: 100%;
+  animation: marquee 30s linear infinite;
+}
+
+/* Subtle glass effect */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}</style><script src="https://cdn.tailwindcss.com"></script><script>tailwind.config = {
+  important: '#app-root',
+  theme: {
+    extend: {
+      colors: {
+        'brand-primary': '#121212',
+        'brand-secondary': '#FAF9F6',
+        'brand-accent': '#C29967', // Warm brass/gold
+        'brand-orange': '#D97706', // Warm amber accent
+        'neutral-background': '#FFFFFF',
+        'neutral-surface': '#F4F4F4',
+        'text-primary': '#121212',
+        'text-secondary': 'rgba(18, 18, 18, 0.7)',
+        'text-onPrimary': '#FFFFFF',
+        'border-light': '#EAEAEA',
+        'white-10': 'rgba(255, 255, 255, 0.1)',
+        'white-20': 'rgba(255, 255, 255, 0.2)',
+        'white-40': 'rgba(255, 255, 255, 0.4)',
+        'white-60': 'rgba(255, 255, 255, 0.6)',
+      },
+      fontFamily: {
+        'primary': ['Playfair Display', 'serif'],
+        'secondary': ['Satoshi', 'Inter Tight', 'sans-serif'],
+      },
+      spacing: {
+        's': '16px',
+        'm': '24px',
+        'l': '32px',
+        'xl': '48px',
+        'box-p': '32px',
+      },
+      borderRadius: {
+        'sm': '4px',
+        'md': '8px',
+        'lg': '24px',
+        'card': '10px',
+        'full': '9999px',
+        'arch': '1000px',
+      },
+      boxShadow: {
+        'soft': '0 4px 20px rgba(0, 0, 0, 0.03)',
+        'card': '0 10px 40px rgba(0, 0, 0, 0.06)',
+      },
+      animation: {
+        'infinite-scroll': 'infinite-scroll 50s linear infinite',
+        'marquee': 'marquee 30s linear infinite',
+      },
+      keyframes: {
+        'infinite-scroll': {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(-50%)' },
+        },
+        'marquee': {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-100%)' },
+        }
+      }
+    }
+  },
+  plugins: [],
+}</script></head>
+
+<body id="app-root">
+  <!-- Master Wrapper -->
+  <div class="font-secondary bg-neutral-background text-text-primary overflow-x-hidden min-h-screen flex flex-col w-full relative">
+    
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-border-light/40">
+      <nav class="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
+        
+        <!-- Menu Toggle (Left) -->
+        <button id="menu-btn" class="p-3 hover:bg-brand-secondary rounded-full transition-colors flex items-center justify-center group">
+          <i class="ph ph-list text-2xl text-brand-primary group-hover:text-brand-accent transition-colors"></i>
+        </button>
+        
+        <!-- Centered Logo -->
+        <a href="/" class="flex flex-col items-center group absolute left-1/2 -translate-x-1/2">
+          <i class="ph ph-lamp text-2xl mb-1 text-brand-accent group-hover:scale-110 transition-transform duration-500"></i>
+          <span class="font-primary text-xl font-bold text-brand-primary tracking-[0.25em] uppercase">Lumina</span>
+        </a>
+
+        <!-- CTA Button (Right) -->
+        <a href="#collections" class="hidden md:inline-block bg-brand-primary hover:bg-brand-accent text-white px-8 py-3 rounded-full font-bold text-[11px] uppercase tracking-[0.15em] shadow-lg transition-all transform hover:scale-105 active:scale-95">
+          Shop Now
+        </a>
+      </nav>
+    </header>
+
+    <!-- Fullscreen Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-brand-primary z-[60] flex flex-col items-center justify-center space-y-12 opacity-0 pointer-events-none visibility-hidden transition-all duration-500">
+      <button id="close-menu-btn" class="absolute top-8 left-6 p-3 hover:bg-white/10 rounded-full transition-colors">
+          <i class="ph ph-x text-3xl text-white"></i>
+      </button>
+
+      <div class="flex flex-col items-center space-y-8 text-center">
+        <a href="/" class="text-5xl font-primary font-bold text-white hover:text-brand-accent transition-colors menu-link">Home</a>
+        <a href="#collections" class="text-5xl font-primary font-bold text-white hover:text-brand-accent transition-colors menu-link">Collections</a>
+        <a href="#about" class="text-5xl font-primary font-bold text-white hover:text-brand-accent transition-colors menu-link">The Atelier</a>
+        <a href="#why-lumina" class="text-5xl font-primary font-bold text-white hover:text-brand-accent transition-colors menu-link">Our Story</a>
+        <a href="#" class="text-5xl font-primary font-bold text-white hover:text-brand-accent transition-colors menu-link">Journal</a>
+        
+        <div class="pt-6">
+          <a href="#collections" class="bg-brand-accent hover:bg-white text-brand-primary px-10 py-4 rounded-full font-bold text-[13px] uppercase tracking-[0.2em] shadow-xl transition-all transform hover:scale-105 active:scale-95 menu-link inline-block">
+            Shop Now
+          </a>
+        </div>
+      </div>
+
+      <div class="flex flex-col items-center gap-6 pt-12">
+        <p class="text-[11px] font-bold text-brand-accent uppercase tracking-widest">Follow Our Story</p>
+        <div class="flex gap-8">
+            <a href="#" class="text-white/40 hover:text-white transition-colors"><i class="ph ph-instagram-logo text-3xl"></i></a>
+            <a href="#" class="text-white/40 hover:text-white transition-colors"><i class="ph ph-pinterest-logo text-3xl"></i></a>
+            <a href="#" class="text-white/40 hover:text-white transition-colors"><i class="ph ph-behance-logo text-3xl"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <main class="flex-grow pt-24"><section class="py-12 md:py-24 overflow-hidden">
+  <div class="max-w-7xl mx-auto px-6 mb-16">
+    <div class="flex flex-col lg:flex-row items-end justify-between gap-12">
+      <div class="w-full lg:w-2/3">
+        <h1 class="font-primary text-[56px] md:text-[90px] leading-[0.9] font-bold text-brand-primary tracking-tighter mb-8" data-editable="text" data-path="hero.title" data-animate-text="">
+          The Art of Perfect Light.
+        </h1>
+        <p class="text-xl md:text-2xl text-text-secondary leading-relaxed max-w-xl" data-editable="text" data-path="hero.subtitle" data-animate-text="">
+          Architectural lighting for spaces that inspire. Discover our new collection of hand-finished brass and oak lamps.
+        </p>
+      </div>
+      <div class="w-full lg:w-1/3 flex flex-col gap-6" data-animation-on-scroll="">
+        <div class="bg-brand-secondary p-8 rounded-xl border border-border-light">
+          <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-brand-accent mb-2">New Arrival</p>
+          <p class="text-lg font-medium">The Solstice Floor Lamp is now available in Matte Black. Limited edition of 200.</p>
+        </div>
+        <a href="#collections" class="bg-brand-primary text-white text-center py-5 rounded-full text-[13px] font-bold uppercase tracking-widest hover:bg-brand-accent transition-all shadow-xl">Shop The Collection</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Infinite Product/Lifestyle Carousel -->
+  <div class="relative w-full overflow-hidden mb-24">
+    <div class="animate-infinite-scroll flex gap-6 px-4">
+      <img src="https://images.unsplash.com/photo-1675608691851-6493dbbc111e?ixid=M3w4NjU0NDF8MHwxfHNlYXJjaHwxfHxNaW5pbWFsaXN0JTIwYnJhc3MlMjBmbG9vciUyMGxhbXAlMjBpbiUyMG1vb2R5JTIwbGl2aW5nJTIwcm9vbXxlbnwwfDB8fHwxNzc0MDEyNDI3fDA&amp;ixlib=rb-4.1.0&amp;w=800&amp;h=600&amp;fit=crop&amp;fm=jpg&amp;q=80" class="w-[450px] h-[350px] object-cover rounded-xl shadow-soft" alt="Minimalist brass floor lamp">
+      <img src="https://images.unsplash.com/photo-1765371512501-d25a6af94c91?ixid=M3w4NjU0NDF8MHwxfHNlYXJjaHwxfHxEZXNpZ25lciUyMHRhYmxlJTIwbGFtcCUyMG9uJTIwd29vZGVuJTIwZGVzayUyMHdpdGglMjBzb2Z0JTIwd2FybSUyMGxpZ2h0fGVufDB8MHx8fDE3NzQwMTI0Mjd8MA&amp;ixlib=rb-4.1.0&amp;w=800&amp;h=600&amp;fit=crop&amp;fm=jpg&amp;q=80" class="w-[450px] h-[350px] object-cover rounded-xl shadow-soft" alt="Designer table lamp">
+      <img src="https://images.unsplash.com/photo-1585261450736-67d578ff00b4?ixid=M3w4NjU0NDF8MHwxfHNlYXJjaHwxfHxNb2Rlcm4lMjBhcmNoaXRlY3R1cmFsJTIwcGVuZGFudCUyMGxpZ2h0JTIwaGFuZ2luZyUyMGluJTIwa2l0Y2hlbnxlbnwwfDB8fHwxNzc0MDEyNDI3fDA&amp;ixlib=rb-4.1.0&amp;w=800&amp;h=600&amp;fit=crop&amp;fm=jpg&amp;q=80" class="w-[450px] h-[350px] object-cover rounded-xl shadow-soft" alt="Modern pendant light">
+      <img src="https://images.unsplash.com/photo-1566890463705-46b4fefa8a53?ixid=M3w4NjU0NDF8MHwxfHNlYXJjaHwxfHxTbGVlayUyMGFyY2hpdGVjdHVyYWwlMjBsaWdodGluZyUyMGluJTIwY29udGVtcG9yYXJ5JTIwaGFsbHdheXxlbnwwfDB8fHwxNzc0MDEyNDI3fDA&amp;ixlib=rb-4.1.0&amp;w=800&amp;h=600&amp;fit=crop&amp;fm=jpg&amp;q=80" class="w-[450px] h-[350px] object-cover rounded-xl shadow-soft" alt="Architectural lighting">
+      <img src="https://images.unsplash.com/photo-1758448755969-8791367cf5c5?ixid=M3w4NjU0NDF8MHwxfHNlYXJjaHwxfHxXYXJtJTIwbGlnaHRpbmclMjBhdG1vc3BoZXJlJTIwaW4lMjBsdXh1cnklMjBiZWRyb29tJTIwc3VpdGV8ZW58MHwwfHx8MTc3NDAxMjQyN3ww&amp;ixlib=rb-4.1.0&amp;w=800&amp;h=600&amp;fit=crop&amp;fm=jpg&amp;q=80" class="w-[450px] h-[350px] object-cover rounded-xl shadow-soft" alt="Luxury bedroom lighting">
+      <!-- Repeat for seamless loop -->
+      <img src="https://images.unsplash.com/photo-1675608691851-6493dbbc111e?ixid=M3w4NjU0NDF8MHwxfHNlYXJjaHwxfHxNaW5pbWFsaXN0JTIwYnJhc3MlMjBmbG9vciUyMGxhbXAlMjBpbiUyMG1vb2R5JTIwbGl2aW5nJTIwcm9vbXxlbnwwfDB8fHwxNzc0MDEyNDI3fDA&amp;ixlib=rb-4.1.0&amp;w=800&amp;h=600&amp;fit=crop&amp;fm=jpg&amp;q=80" class="w-[450px] h-[350px] object-cover rounded-xl shadow-soft" alt="Minimalist brass floor lamp">
+      <img src="https://images.unsplash.com/photo-1765371512501-d25a6af94c91?ixid=M3w4NjU0NDF8MHwxfHNlYXJjaHwxfHxEZXNpZ25lciUyMHRhYmxlJTIwbGFtcCUyMG9uJTIwd29vZGVuJTIwZGVzayUyMHdpdGglMjBzb2Z0JTIwd2FybSUyMGxpZ2h0fGVufDB8MHx8fDE3NzQwMTI0Mjd8MA&amp;ixlib=rb-4.1.0&amp;w=800&amp;h=600&amp;fit=crop&amp;fm=jpg&amp;q=80" class="w-[450px] h-[350px] object-cover rounded-xl shadow-soft" alt="Designer table lamp">
+      <img src="https://images.unsplash.com/photo-1585261450736-67d578ff00b4?ixid=M3w4NjU0NDF8MHwxfHNlYXJjaHwxfHxNb2Rlcm4lMjBhcmNoaXRlY3R1cmFsJTIwcGVuZGFudCUyMGxpZ2h0JTIwaGFuZ2luZyUyMGluJTIwa2l0Y2hlbnxlbnwwfDB8fHwxNzc0MDEyNDI3fDA&amp;ixlib=rb-4.1.0&amp;w=800&amp;h=600&amp;fit=crop&amp;fm=jpg&amp;q=80" class="w-[450px] h-[350px] object-cover rounded-xl shadow-soft" alt="Modern pendant light">
+      <img src="https://images.unsplash.com/photo-1566890463705-46b4fefa8a53?ixid=M3w4NjU0NDF8MHwxfHNlYXJjaHwxfHxTbGVlayUyMGFyY2hpdGVjdHVyYWwlMjBsaWdodGluZyUyMGluJTIwY29udGVtcG9yYXJ5JTIwaGFsbHdheXxlbnwwfDB8fHwxNzc0MDEyNDI3fDA&amp;ixlib=rb-4.1.0&amp;w=800&amp;h=600&amp;fit=crop&amp;fm=jpg&amp;q=80" class="w-[450px] h-[350px] object-cover rounded-xl shadow-soft" alt="Architectural lighting">
+      <img src="https://images.unsplash.com/photo-1758448755969-8791367cf5c5?ixid=M3w4NjU0NDF8MHwxfHNlYXJjaHwxfHxXYXJtJTIwbGlnaHRpbmclMjBhdG1vc3BoZXJlJTIwaW4lMjBsdXh1cnklMjBiZWRyb29tJTIwc3VpdGV8ZW58MHwwfHx8MTc3NDAxMjQyN3ww&amp;ixlib=rb-4.1.0&amp;w=800&amp;h=600&amp;fit=crop&amp;fm=jpg&amp;q=80" class="w-[450px] h-[350px] object-cover rounded-xl shadow-soft" alt="Luxury bedroom lighting">
+    </div>
+  </div>
+</section>
+
+<!-- Stats/Brand Values -->
+<section id="about" class="py-24 bg-brand-secondary border-y border-border-light">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-12 text-center md:text-left">
+      <div data-animation-on-scroll="">
+        <p class="text-brand-accent text-3xl font-primary italic mb-2">5 Year</p>
+        <h3 class="text-sm font-bold uppercase tracking-widest text-text-primary">Warranty</h3>
+      </div>
+      <div data-animation-on-scroll="">
+        <p class="text-brand-accent text-3xl font-primary italic mb-2">100%</p>
+        <h3 class="text-sm font-bold uppercase tracking-widest text-text-primary">Sustainable Wood</h3>
+      </div>
+      <div data-animation-on-scroll="">
+        <p class="text-brand-accent text-3xl font-primary italic mb-2">Crafted</p>
+        <h3 class="text-sm font-bold uppercase tracking-widest text-text-primary">In Portugal</h3>
+      </div>
+      <div data-animation-on-scroll="">
+        <p class="text-brand-accent text-3xl font-primary italic mb-2">Free</p>
+        <h3 class="text-sm font-bold uppercase tracking-widest text-text-primary">EU Shipping</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Collection Deck Spreading Section -->
+<section id="collections" class="py-32 bg-brand-primary text-white overflow-hidden relative">
+  <div class="max-w-7xl mx-auto px-6 text-center mb-16">
+    <p class="text-brand-accent text-sm font-bold uppercase tracking-[0.2em] mb-4" data-animation-on-scroll="">The Atelier Editions</p>
+    <h2 class="font-primary text-4xl md:text-7xl font-bold tracking-tighter" data-animate-text="">Browse Our Collections</h2>
+  </div>
+
+  <div class="relative w-full max-w-6xl mx-auto h-[500px] md:h-[650px] flex items-center justify-center" id="deck-trigger">
+    <div class="deck-container relative w-full h-full flex items-center justify-center perspective-1000">
+      
+      <!-- Card 1 -->
+      <div class="deck-card group" style="--index: 0;">
+        <img src="https://images.unsplash.com/photo-1770646403987-64cf5c08c870?ixid=M3w4NjU0NDF8MHwxfHNlYXJjaHwxfHxEZXNpZ25lciUyMG1pbmltYWxpc3QlMjB0YWJsZSUyMGxhbXAlMjBvbiUyMG1hcmJsZSUyMGJhc2V8ZW58MHwxfHx8MTc3NDQzMTcxOHww&amp;ixlib=rb-4.1.0&amp;w=600&amp;h=800&amp;fit=crop&amp;fm=jpg&amp;q=80" alt="Table Lamps" class="w-full h-full object-cover">
+        <div class="deck-card-overlay">
+          <span class="text-xs font-bold uppercase tracking-widest text-brand-accent mb-2">Series 01</span>
+          <h4 class="font-primary text-3xl font-bold text-white">Table Lamps</h4>
+          <p class="text-xs text-white/60 mt-2 uppercase tracking-widest">Explore Collection</p>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="deck-card group" style="--index: 1;">
+        <img src="https://images.unsplash.com/photo-1659100171587-a8a5e9d9417a?ixid=M3w4NjU0NDF8MHwxfHNlYXJjaHwxfHxUYWxsJTIwYXJjaGl0ZWN0dXJhbCUyMGJyYXNzJTIwZmxvb3IlMjBsYW1wfGVufDB8MXx8fDE3NzQ0MzE3MTh8MA&amp;ixlib=rb-4.1.0&amp;w=600&amp;h=800&amp;fit=crop&amp;fm=jpg&amp;q=80" alt="Floor Lamps" class="w-full h-full object-cover">
+        <div class="deck-card-overlay">
+          <span class="text-xs font-bold uppercase tracking-widest text-brand-accent mb-2">Series 02</span>
+          <h4 class="font-primary text-3xl font-bold text-white">Floor Lamps</h4>
+          <p class="text-xs text-white/60 mt-2 uppercase tracking-widest">Explore Collection</p>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="deck-card group" style="--index: 2;">
+        <img src="https://images.unsplash.com/photo-1763525398198-d154a309f356?ixid=M3w4NjU0NDF8MHwxfHNlYXJjaHwxfHxIYW5kLWJsb3duJTIwZ2xhc3MlMjBwZW5kYW50JTIwbGlnaHQlMjBmaXh0dXJlfGVufDB8MXx8fDE3NzQ0MzE3MTh8MA&amp;ixlib=rb-4.1.0&amp;w=600&amp;h=800&amp;fit=crop&amp;fm=jpg&amp;q=80" alt="Pendant Lights" class="w-full h-full object-cover">
+        <div class="deck-card-overlay">
+          <span class="text-xs font-bold uppercase tracking-widest text-brand-accent mb-2">Series 03</span>
+          <h4 class="font-primary text-3xl font-bold text-white">Pendant Lights</h4>
+          <p class="text-xs text-white/60 mt-2 uppercase tracking-widest">Explore Collection</p>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="deck-card group" style="--index: 3;">
+        <img src="https://images.unsplash.com/photo-1770277375251-d394346bd4cf?ixid=M3w4NjU0NDF8MHwxfHNlYXJjaHwxfHxNaW5pbWFsaXN0JTIwYnJhc3MlMjB3YWxsJTIwc2NvbmNlJTIwbGlnaHRpbmd8ZW58MHwxfHx8MTc3NDQzMTcxOHww&amp;ixlib=rb-4.1.0&amp;w=600&amp;h=800&amp;fit=crop&amp;fm=jpg&amp;q=80" alt="Wall Sconces" class="w-full h-full object-cover">
+        <div class="deck-card-overlay">
+          <span class="text-xs font-bold uppercase tracking-widest text-brand-accent mb-2">Series 04</span>
+          <h4 class="font-primary text-3xl font-bold text-white">Wall Sconces</h4>
+          <p class="text-xs text-white/60 mt-2 uppercase tracking-widest">Explore Collection</p>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="deck-card group" style="--index: 4;">
+        <img src="https://images.unsplash.com/photo-1692856135967-89f9b37aa8ba?ixid=M3w4NjU0NDF8MHwxfHNlYXJjaHwxfHxMdXh1cnklMjBsaW1pdGVkJTIwZWRpdGlvbiUyMHNjdWxwdHVyYWwlMjBsYW1wfGVufDB8MXx8fDE3NzQ0MzE3MTh8MA&amp;ixlib=rb-4.1.0&amp;w=600&amp;h=800&amp;fit=crop&amp;fm=jpg&amp;q=80" alt="Limited Editions" class="w-full h-full object-cover">
+        <div class="deck-card-overlay">
+          <span class="text-xs font-bold uppercase tracking-widest text-brand-accent mb-2">Series 05</span>
+          <h4 class="font-primary text-3xl font-bold text-white">Limited Editions</h4>
+          <p class="text-xs text-white/60 mt-2 uppercase tracking-widest">Explore Collection</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <style>
+    #collections .deck-card {
+      position: absolute;
+      width: 280px;
+      height: 400px;
+      border-radius: 1.5rem;
+      overflow: hidden;
+      background: #1a1a1a;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+      transition: all 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) rotate(calc(var(--index) * 3deg));
+      z-index: calc(10 - var(--index));
+      border: 1px solid rgba(194, 153, 103, 0.1);
+      cursor: pointer;
+    }
+
+    #collections .deck-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(18,18,18,0.95), transparent 60%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 2rem;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.4s ease;
+    }
+
+    #collections .deck-card:hover {
+      z-index: 50 !important;
+      transform: translate(-50%, -60%) scale(1.08) rotate(0deg) !important;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.9);
+      border-color: #C29967;
+    }
+
+    #collections .deck-card:hover .deck-card-overlay {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Spread States for Desktop */
+    #collections .spread-active .deck-card[style*="--index: 0"] { transform: translate(-230%, -50%) rotate(-10deg); }
+    #collections .spread-active .deck-card[style*="--index: 1"] { transform: translate(-120%, -50%) rotate(-4deg); }
+    #collections .spread-active .deck-card[style*="--index: 2"] { transform: translate(-50%, -50%) rotate(0deg); }
+    #collections .spread-active .deck-card[style*="--index: 3"] { transform: translate(20%, -50%) rotate(4deg); }
+    #collections .spread-active .deck-card[style*="--index: 4"] { transform: translate(130%, -50%) rotate(10deg); }
+
+    @media (max-width: 1024px) {
+       #collections .deck-card { width: 220px; height: 320px; }
+       #collections .spread-active .deck-card[style*="--index: 0"] { transform: translate(-180%, -50%) rotate(-8deg); }
+       #collections .spread-active .deck-card[style*="--index: 1"] { transform: translate(-100%, -50%) rotate(-3deg); }
+       #collections .spread-active .deck-card[style*="--index: 2"] { transform: translate(-50%, -50%) rotate(0deg); }
+       #collections .spread-active .deck-card[style*="--index: 3"] { transform: translate(0%, -50%) rotate(3deg); }
+       #collections .spread-active .deck-card[style*="--index: 4"] { transform: translate(80%, -50%) rotate(8deg); }
+    }
+
+    @media (max-width: 768px) {
+      #collections { height: auto; min-height: 900px; }
+      #collections .deck-card { width: 190px; height: 270px; }
+      #collections .spread-active .deck-card[style*="--index: 0"] { transform: translate(-110%, -100%) rotate(-10deg); }
+      #collections .spread-active .deck-card[style*="--index: 1"] { transform: translate(10%, -100%) rotate(-2deg); }
+      #collections .spread-active .deck-card[style*="--index: 2"] { transform: translate(-50%, -50%) rotate(0deg); }
+      #collections .spread-active .deck-card[style*="--index: 3"] { transform: translate(-110%, 10%) rotate(5deg); }
+      #collections .spread-active .deck-card[style*="--index: 4"] { transform: translate(10%, 10%) rotate(10deg); }
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const trigger = document.getElementById('deck-trigger');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('spread-active');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.2 });
+
+      if (trigger) observer.observe(trigger);
+    });
+  </script>
+</section>
+
+<!-- Lumina Highlights / Testimonials Section -->
+<section class="px-6 py-24 max-w-7xl mx-auto overflow-hidden">
+  <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+    <div data-animation-on-scroll="">
+      <p class="text-brand-accent text-sm font-bold uppercase tracking-[0.2em] mb-3">Community Stories</p>
+      <h2 class="text-4xl md:text-5xl font-bold text-brand-primary font-primary tracking-tighter" data-animate-text="">Lumina in Atmosphere</h2>
+    </div>
+    <div data-animation-on-scroll="">
+      <button class="bg-white border border-border-light px-8 py-3 rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-brand-secondary transition-colors text-text-primary shadow-sm">
+        View All Projects
+      </button>
+    </div>
+  </div>
+  
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-stretch">
+    <!-- Testimonial Card -->
+    <div data-animation-on-scroll="" class="md:col-span-4 bg-brand-secondary p-8 md:p-10 rounded-[2.5rem] shadow-soft flex flex-col justify-between border border-border-light relative overflow-hidden group">
+      <div class="relative z-10">
+        <div class="flex items-center gap-4 mb-8">
+          <img src="https://images.pexels.com/photos/36279931/pexels-photo-36279931.jpeg?w=200&amp;h=200&amp;fit=crop" alt="Elena Rossi" class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm">
+          <div>
+            <h4 class="font-bold text-brand-primary font-primary text-lg">Elena Rossi</h4>
+            <p class="text-[10px] text-text-secondary uppercase tracking-[0.15em] font-bold">Studio Rossi, Milan</p>
+          </div>
+        </div>
+        
+        <div class="flex gap-1 text-brand-accent mb-6">
+          <i class="ph-fill ph-star text-sm"></i>
+          <i class="ph-fill ph-star text-sm"></i>
+          <i class="ph-fill ph-star text-sm"></i>
+          <i class="ph-fill ph-star text-sm"></i>
+          <i class="ph-fill ph-star text-sm"></i>
+        </div>
+
+        <h5 class="font-primary font-bold text-2xl mb-4 text-brand-primary">Unparalleled Warmth</h5>
+        <p class="text-text-secondary text-base leading-relaxed mb-8 italic">
+          "Working with Lumina has completely redefined how we approach residential lighting. The weight of the hand-finished brass and the specific Kelvin temperature of their LEDs create a mood that simply cannot be replicated by mass-market fixtures."
+        </p>
+      </div>
+      
+      <a href="#" class="text-brand-primary font-bold text-[11px] uppercase tracking-widest hover:text-brand-accent flex items-center gap-2 group relative z-10">
+        Read full story 
+        <span class="group-hover:translate-x-1 transition-transform">→</span>
+      </a>
+
+      <!-- Decorative background icon -->
+      <i class="ph ph-quotes absolute -bottom-6 -right-6 text-[12rem] text-brand-accent/5 pointer-events-none"></i>
+    </div>
+
+    <!-- Highlight Images -->
+    <div class="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-8 h-full">
+      <!-- Image 1 -->
+      <div data-animation-on-scroll="" class="relative h-[400px] md:h-full min-h-[350px] rounded-[2.5rem] overflow-hidden group shadow-card">
+         <img src="https://images.pexels.com/photos/6580404/pexels-photo-6580404.jpeg?w=800&amp;h=1000&amp;fit=crop" alt="Lumina in a luxury Milanese apartment" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out">
+         <div class="absolute inset-0 bg-gradient-to-t from-brand-primary/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity"></div>
+         <div class="absolute bottom-0 left-0 w-full p-8 text-white transform translate-y-2 group-hover:translate-y-0 transition-transform">
+           <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-accent mb-2">Project 01</p>
+           <p class="font-primary font-bold text-2xl">Milanese Penthouse</p>
+         </div>
+      </div>
+
+      <!-- Image 2 with Play Button -->
+      <div data-animation-on-scroll="" class="relative h-[400px] md:h-full min-h-[350px] rounded-[2.5rem] overflow-hidden group shadow-card">
+         <img src="https://images.pexels.com/photos/7439756/pexels-photo-7439756.jpeg?w=800&amp;h=1000&amp;fit=crop" alt="Lumina lamp craftsmanship detail" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out">
+         <div class="absolute inset-0 bg-black/20 flex items-center justify-center group-hover:bg-black/40 transition-colors cursor-pointer z-10">
+           <div class="w-20 h-20 bg-white/10 backdrop-blur-xl rounded-full flex items-center justify-center border border-white/30 hover:scale-110 hover:bg-brand-accent hover:border-brand-accent transition-all duration-500 group/play">
+             <i class="ph-fill ph-play text-white text-2xl ml-1 group-hover/play:text-brand-primary transition-colors"></i>
+           </div>
+         </div>
+         <div class="absolute inset-0 bg-gradient-to-t from-brand-primary/80 via-transparent to-transparent opacity-60"></div>
+         <div class="absolute bottom-0 left-0 w-full p-8 text-white">
+           <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-accent mb-2">Atelier Film</p>
+           <p class="font-primary font-bold text-2xl">The Casting Process</p>
+         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Why Choose Lumina (Nexus Style with Flip Cards) -->
+<section id="why-lumina" class="relative w-full flex flex-col items-center justify-center py-[120px] px-[30px] bg-white overflow-hidden font-secondary">
+  <style>
+    #why-lumina .flip-card {
+      perspective: 1000px;
+    }
+    #why-lumina .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+    #why-lumina .flip-card:hover .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    #why-lumina .front, #why-lumina .back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    #why-lumina .back {
+      transform: rotateY(180deg);
+    }
+  </style>
+
+  <!-- Side Decorative Lines -->
+  <div class="absolute inset-0 pointer-events-none flex justify-center z-0">
+    <div class="w-full max-w-[1300px] h-full relative">
+      <div class="absolute left-[50px] w-[1px] h-full bg-border-light/40"></div>
+      <div class="absolute right-[50px] w-[1px] h-full bg-border-light/40"></div>
+    </div>
+  </div>
+
+  <div class="relative z-10 w-full max-w-[1060px] flex flex-col items-center gap-[56px]">
+    
+    <!-- Header Content -->
+    <div class="flex flex-col items-center gap-4 text-center">
+      <!-- Badge -->
+      <div class="inline-flex items-center gap-2 px-4 py-[9px] bg-white rounded-full border-[1.5px] border-border-light shadow-[0_4px_16px_rgba(0,0,0,0.03)]" data-animation-on-scroll="">
+        <i class="ph ph-sparkle text-brand-accent"></i>
+        <span class="text-[13px] font-bold uppercase tracking-widest text-brand-primary">Why Lumina</span>
+      </div>
+      
+      <h2 class="text-[44px] md:text-[56px] font-bold font-primary leading-[1.1] text-brand-primary tracking-tighter" data-animate-text="">
+        Architectural light, domestic soul
+      </h2>
+      <p class="text-[18px] text-text-secondary leading-[1.6] max-w-2xl" data-animate-text="">
+        Connoisseurs choose Lumina because we bridge the gap between industrial precision and the warmth of a lived-in home.
+      </p>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+      
+      <!-- Card 1 -->
+      <div class="flip-card aspect-[337/350] w-full" data-animation-on-scroll="">
+        <div class="flip-card-inner">
+          <!-- Front -->
+          <div class="front bg-brand-secondary border-[1.5px] border-border-light shadow-sm">
+             <div class="w-full h-2/3 rounded-xl overflow-hidden mb-6">
+                <img src="https://images.pexels.com/photos/12733/pexels-photo-12733.jpeg?w=600&amp;h=400&amp;fit=crop" alt="Solid Brass Hardware" class="w-full h-full object-cover">
+             </div>
+             <h3 class="text-[22px] font-bold font-primary text-brand-primary tracking-tight">Solid Brass Hardware</h3>
+          </div>
+          <!-- Back -->
+          <div class="back bg-brand-primary text-white shadow-xl">
+            <h3 class="text-[24px] font-bold font-primary mb-4 text-brand-accent">Aged to Perfection</h3>
+            <p class="text-[15px] leading-[1.6] opacity-80">
+              We use heavy-gauge brass that develops a rich, unique patina over time. It doesn't just age; it tells the story of your home.
+            </p>
+            <div class="mt-6 px-4 py-2 border border-white/20 rounded-full text-[10px] font-bold uppercase tracking-widest">Honest Materials</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="flip-card aspect-[337/350] w-full" data-animation-on-scroll="" style="transition-delay: 100ms;">
+        <div class="flip-card-inner">
+          <!-- Front -->
+          <div class="front bg-brand-secondary border-[1.5px] border-border-light shadow-sm">
+             <div class="w-full h-2/3 rounded-xl overflow-hidden mb-6">
+                <img src="https://images.pexels.com/photos/7519888/pexels-photo-7519888.jpeg?w=600&amp;h=400&amp;fit=crop" alt="Hand-Blown Glass" class="w-full h-full object-cover">
+             </div>
+             <h3 class="text-[22px] font-bold font-primary text-brand-primary tracking-tight">Hand-Blown Glass</h3>
+          </div>
+          <!-- Back -->
+          <div class="back bg-brand-accent text-brand-primary shadow-xl">
+            <h3 class="text-[24px] font-bold font-primary mb-4">Organic Clarity</h3>
+            <p class="text-[15px] leading-[1.6] font-medium opacity-90">
+              Each glass shade is individually blown by our master artisans in Portugal. Slight imperfections are the signature of a truly unique piece.
+            </p>
+            <div class="mt-6 px-4 py-2 border border-brand-primary/20 rounded-full text-[10px] font-bold uppercase tracking-widest">Atelier Craft</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="flip-card aspect-[337/350] w-full" data-animation-on-scroll="" style="transition-delay: 200ms;">
+        <div class="flip-card-inner">
+          <!-- Front -->
+          <div class="front bg-brand-secondary border-[1.5px] border-border-light shadow-sm">
+             <div class="w-full h-2/3 rounded-xl overflow-hidden mb-6">
+                <img src="https://images.pexels.com/photos/2762957/pexels-photo-2762957.jpeg?w=600&amp;h=400&amp;fit=crop" alt="Modular Design" class="w-full h-full object-cover">
+             </div>
+             <h3 class="text-[22px] font-bold font-primary text-brand-primary tracking-tight">Modular Sustainability</h3>
+          </div>
+          <!-- Back -->
+          <div class="back bg-black text-white shadow-xl">
+            <h3 class="text-[24px] font-bold font-primary mb-4 text-brand-accent">Built to Last</h3>
+            <p class="text-[15px] leading-[1.6] opacity-80">
+              We design for repairability. Every Lumina component is modular, allowing for easy updates or maintenance to ensure a lifetime of service.
+            </p>
+            <div class="mt-6 px-4 py-2 border border-white/20 rounded-full text-[10px] font-bold uppercase tracking-widest">Future Conscious</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-24 md:py-32 bg-white" id="faq">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex flex-col lg:flex-row gap-16 md:gap-24">
+      <!-- FAQ Header -->
+      <div class="lg:w-2/5" data-animation-on-scroll="">
+        <div class="inline-block px-4 py-2 bg-brand-accent/10 rounded-full text-[11px] font-bold uppercase tracking-[0.2em] text-brand-accent mb-6">
+          Support &amp; Care
+        </div>
+        <h2 class="font-primary text-4xl md:text-6xl font-bold tracking-tighter leading-[1.1] text-brand-primary" data-animate-text="">
+          Frequently Asked Questions
+        </h2>
+        <p class="mt-8 text-text-secondary text-lg max-w-sm" data-animate-text="">
+          Everything you need to know about our craftsmanship, shipping, and technical specifications.
+        </p>
+        <div class="mt-12 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-full bg-brand-secondary flex items-center justify-center border border-border-light">
+            <i class="ph ph-envelope text-xl"></i>
+          </div>
+          <div>
+            <p class="text-xs font-bold uppercase tracking-widest text-brand-accent">Still have questions?</p>
+            <a href="mailto:atelier@lumina.com" class="text-sm font-medium hover:text-brand-accent transition-colors">atelier@lumina.com</a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- FAQ List -->
+      <div class="lg:w-3/5 space-y-4" data-animation-on-scroll="">
+        <div class="faq-item border border-border-light rounded-2xl overflow-hidden bg-brand-secondary/30 transition-all duration-300">
+          <button class="faq-question w-full flex justify-between items-center p-6 md:p-8 text-left group">
+            <span class="font-primary font-bold text-lg md:text-xl text-brand-primary">What materials define the Lumina collection?</span>
+            <div class="faq-icon w-8 h-8 rounded-full border border-border-light flex items-center justify-center flex-shrink-0 ml-4 group-hover:bg-brand-primary group-hover:border-brand-primary transition-all duration-300">
+              <i class="ph ph-plus text-brand-primary group-hover:text-white transition-colors faq-plus-icon"></i>
+            </div>
+          </button>
+          <div class="faq-answer max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
+            <p class="px-6 md:px-8 pb-8 text-text-secondary leading-relaxed max-w-2xl">
+              We exclusively use honest, raw materials that age beautifully. This includes heavy-gauge solid brass, hand-blown crystalline glass from Portugal, and FSC-certified European oak. Each material is selected for its tactile quality and durability.
+            </p>
+          </div>
+        </div>
+        
+        <div class="faq-item border border-border-light rounded-2xl overflow-hidden bg-brand-secondary/30 transition-all duration-300">
+          <button class="faq-question w-full flex justify-between items-center p-6 md:p-8 text-left group">
+            <span class="font-primary font-bold text-lg md:text-xl text-brand-primary">Are your lamps compatible with smart home systems?</span>
+            <div class="faq-icon w-8 h-8 rounded-full border border-border-light flex items-center justify-center flex-shrink-0 ml-4 group-hover:bg-brand-primary group-hover:border-brand-primary transition-all duration-300">
+              <i class="ph ph-plus text-brand-primary group-hover:text-white transition-colors faq-plus-icon"></i>
+            </div>
+          </button>
+          <div class="faq-answer max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
+            <p class="px-6 md:px-8 pb-8 text-text-secondary leading-relaxed max-w-2xl">
+              Yes. All our integrated LED fixtures and bulb-based lamps are fully dimmable and compatible with major smart home systems including Philips Hue, Lutron, and Nest when paired with appropriate dimming modules.
+            </p>
+          </div>
+        </div>
+        
+        <div class="faq-item border border-border-light rounded-2xl overflow-hidden bg-brand-secondary/30 transition-all duration-300">
+          <button class="faq-question w-full flex justify-between items-center p-6 md:p-8 text-left group">
+            <span class="font-primary font-bold text-lg md:text-xl text-brand-primary">What is the standard lead time for an order?</span>
+            <div class="faq-icon w-8 h-8 rounded-full border border-border-light flex items-center justify-center flex-shrink-0 ml-4 group-hover:bg-brand-primary group-hover:border-brand-primary transition-all duration-300">
+              <i class="ph ph-plus text-brand-primary group-hover:text-white transition-colors faq-plus-icon"></i>
+            </div>
+          </button>
+          <div class="faq-answer max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
+            <p class="px-6 md:px-8 pb-8 text-text-secondary leading-relaxed max-w-2xl">
+              In-stock items ship within 2-3 business days. For our hand-finished artisan pieces, please allow 4-6 weeks for assembly and finishing in our Porto atelier. You will receive a personalized timeline upon order confirmation.
+            </p>
+          </div>
+        </div>
+        
+        <div class="faq-item border border-border-light rounded-2xl overflow-hidden bg-brand-secondary/30 transition-all duration-300">
+          <button class="faq-question w-full flex justify-between items-center p-6 md:p-8 text-left group">
+            <span class="font-primary font-bold text-lg md:text-xl text-brand-primary">Do you offer a warranty on your fixtures?</span>
+            <div class="faq-icon w-8 h-8 rounded-full border border-border-light flex items-center justify-center flex-shrink-0 ml-4 group-hover:bg-brand-primary group-hover:border-brand-primary transition-all duration-300">
+              <i class="ph ph-plus text-brand-primary group-hover:text-white transition-colors faq-plus-icon"></i>
+            </div>
+          </button>
+          <div class="faq-answer max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
+            <p class="px-6 md:px-8 pb-8 text-text-secondary leading-relaxed max-w-2xl">
+              We stand by our craftsmanship. Every Lumina lamp comes with a comprehensive 5-year warranty covering technical components and structural integrity. We also provide modular replacement parts to ensure your lamp lasts a lifetime.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item border border-border-light rounded-2xl overflow-hidden bg-brand-secondary/30 transition-all duration-300">
+          <button class="faq-question w-full flex justify-between items-center p-6 md:p-8 text-left group">
+            <span class="font-primary font-bold text-lg md:text-xl text-brand-primary">Do you have a trade program for interior designers?</span>
+            <div class="faq-icon w-8 h-8 rounded-full border border-border-light flex items-center justify-center flex-shrink-0 ml-4 group-hover:bg-brand-primary group-hover:border-brand-primary transition-all duration-300">
+              <i class="ph ph-plus text-brand-primary group-hover:text-white transition-colors faq-plus-icon"></i>
+            </div>
+          </button>
+          <div class="faq-answer max-h-0 overflow-hidden transition-all duration-500 ease-in-out">
+            <p class="px-6 md:px-8 pb-8 text-text-secondary leading-relaxed max-w-2xl">
+              Absolutely. We partner with architects and designers globally. Members of our trade program receive exclusive pricing, priority lead times, and dedicated project management support for large-scale installations.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section class="py-32 bg-brand-secondary">
+  <div class="max-w-4xl mx-auto px-6 text-center" data-animation-on-scroll="">
+    <h2 class="font-primary text-5xl md:text-7xl font-bold mb-10 text-brand-primary" data-animate-text="">Illuminate Your Home.</h2>
+    <p class="text-xl text-text-secondary mb-12" data-animate-text="">Discover lighting that blends architectural precision with domestic warmth.</p>
+    <div class="flex flex-col sm:flex-row justify-center gap-6">
+      <a href="#collections" class="bg-brand-primary text-white px-12 py-5 rounded-full text-sm font-bold uppercase tracking-widest hover:bg-brand-accent transition-all shadow-xl">Shop The Collection</a>
+      <a href="#" class="border border-brand-primary/20 text-brand-primary px-12 py-5 rounded-full text-sm font-bold uppercase tracking-widest hover:bg-white transition-all">Request a Catalog</a>
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Pause carousel on hover
+  const carousel = document.querySelector('.animate-infinite-scroll');
+  if (carousel) {
+    carousel.addEventListener('mouseenter', () => {
+      carousel.style.animationPlayState = 'paused';
+    });
+    carousel.addEventListener('mouseleave', () => {
+      carousel.style.animationPlayState = 'running';
+    });
+  }
+
+  // Handle Flip Cards on Mobile (Tap to flip)
+  document.querySelectorAll('.flip-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const inner = card.querySelector('.flip-card-inner');
+      if (inner.style.transform === 'rotateY(180deg)') {
+        inner.style.transform = 'rotateY(0deg)';
+      } else {
+        inner.style.transform = 'rotateY(180deg)';
+      }
+    });
+  });
+
+  // FAQ Accordion Logic
+  const faqItems = document.querySelectorAll('.faq-item');
+  faqItems.forEach(item => {
+    const question = item.querySelector('.faq-question');
+    const answer = item.querySelector('.faq-answer');
+    const icon = item.querySelector('.faq-plus-icon');
+    
+    question.addEventListener('click', () => {
+      const isOpen = item.classList.contains('faq-active');
+      
+      // Close others
+      faqItems.forEach(otherItem => {
+        if (otherItem !== item) {
+          otherItem.classList.remove('faq-active');
+          otherItem.querySelector('.faq-answer').style.maxHeight = '0';
+          otherItem.querySelector('.faq-plus-icon').style.transform = 'rotate(0deg)';
+          otherItem.classList.remove('bg-white');
+          otherItem.classList.add('bg-brand-secondary/30');
+        }
+      });
+
+      if (isOpen) {
+        item.classList.remove('faq-active');
+        answer.style.maxHeight = '0';
+        icon.style.transform = 'rotate(0deg)';
+        item.classList.remove('bg-white');
+        item.classList.add('bg-brand-secondary/30');
+      } else {
+        item.classList.add('faq-active');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+        icon.style.transform = 'rotate(45deg)';
+        item.classList.add('bg-white');
+        item.classList.remove('bg-brand-secondary/30');
+      }
+    });
+  });
+});
+</script></main>
+
+    <footer class="bg-brand-primary pt-24 text-white relative overflow-hidden border-t border-white-10">
+      <!-- Footer Top / Testimonial Area -->
+      <div class="max-w-7xl mx-auto px-6 pb-24 grid grid-cols-1 md:grid-cols-3 gap-12 items-center relative z-10">
+        <div data-animation-on-scroll="">
+           <span class="text-brand-accent text-5xl font-primary leading-none">"</span>
+           <h3 class="font-primary text-3xl md:text-4xl leading-snug mt-2" data-animate-text="">
+              Illuminating spaces in their absolute best light
+           </h3>
+           
+           <div class="mt-8 bg-brand-accent p-4 inline-block text-brand-primary rounded-lg">
+              <i class="ph ph-lightbulb-filament text-3xl"></i>
+           </div>
+        </div>
+
+        <div class="flex justify-center relative" data-animation-on-scroll="">
+           <div class="w-64 h-64 rounded-full overflow-hidden border-4 border-white-10 relative">
+              <img src="https://images.pexels.com/photos/36279913/pexels-photo-36279913.jpeg?w=600&amp;h=600&amp;fit=crop" alt="Lead Designer" class="w-full h-full object-cover">
+           </div>
+           <div class="absolute bottom-0 right-0 md:right-10 bg-brand-accent rounded-full p-6 text-brand-primary font-bold text-xs uppercase tracking-widest flex flex-col items-center justify-center w-24 h-24 rotate-12 shadow-lg transform translate-y-4">
+              <span>View</span>
+              <i class="ph-fill ph-play mt-1 text-sm"></i>
+           </div>
+        </div>
+
+        <div class="text-left md:text-right" data-animation-on-scroll="">
+            <p class="font-primary italic text-brand-accent text-lg mb-4">Our Philosophy</p>
+            <h3 class="text-2xl font-light leading-relaxed" data-animate-text="">
+              We explore heritage every day, defining modern atmosphere.
+            </h3>
+            <a href="#" class="inline-block mt-8 border border-white/30 px-6 py-3 text-[11px] font-bold uppercase tracking-widest hover:bg-white hover:text-brand-primary transition-colors duration-300">
+               Read Journal
+            </a>
+        </div>
+      </div>
+
+      <!-- Footer Marquee -->
+      <div class="py-6 border-y bg-black border-white-10 text-white-60 marquee-container flex items-center">
+          <div class="marquee-content font-primary text-lg tracking-wider uppercase flex items-center gap-8">
+              <span>Hand Finished</span> <i class="ph-fill ph-sparkle text-brand-accent text-xs"></i>
+              <span>FSC Certified Wood</span> <i class="ph-fill ph-sparkle text-brand-accent text-xs"></i>
+              <span>Solid Brass</span> <i class="ph-fill ph-sparkle text-brand-accent text-xs"></i>
+              <span>Hand-Blown Glass</span> <i class="ph-fill ph-sparkle text-brand-accent text-xs"></i>
+              <span>5-Year Warranty</span> <i class="ph-fill ph-sparkle text-brand-accent text-xs"></i>
+              <span>Hand Finished</span> <i class="ph-fill ph-sparkle text-brand-accent text-xs"></i>
+              <span>FSC Certified Wood</span> <i class="ph-fill ph-sparkle text-brand-accent text-xs"></i>
+              <span>Solid Brass</span> <i class="ph-fill ph-sparkle text-brand-accent text-xs"></i>
+              <span>Hand-Blown Glass</span> <i class="ph-fill ph-sparkle text-brand-accent text-xs"></i>
+              <span>5-Year Warranty</span> <i class="ph-fill ph-sparkle text-brand-accent text-xs"></i>
+          </div>
+      </div>
+
+      <!-- Main Footer Links -->
+      <div class="bg-brand-primary py-16 px-6 md:px-16">
+         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 border-b border-white-10 pb-12">
+            <div>
+               <p class="text-xs font-bold text-brand-accent uppercase tracking-widest mb-6">Ateliers</p>
+               <div class="flex flex-wrap gap-4">
+                  <div class="border border-white-20 rounded-full px-4 py-2 text-[10px] font-bold uppercase hover:bg-white-10 cursor-pointer transition">London</div>
+                  <div class="border border-white-20 rounded-full px-4 py-2 text-[10px] font-bold uppercase hover:bg-white-10 cursor-pointer transition">Paris</div>
+                  <div class="bg-brand-accent text-brand-primary rounded-full px-4 py-2 text-[10px] font-bold uppercase">Porto HQ</div>
+               </div>
+            </div>
+
+            <div>
+               <p class="text-xs font-bold text-brand-accent uppercase tracking-widest mb-6">Socials</p>
+               <div class="flex gap-4">
+                  <a href="#" class="border border-white-20 text-white rounded-full p-2 hover:bg-white-10 cursor-pointer transition"><i class="ph ph-instagram-logo text-lg"></i></a>
+                  <a href="#" class="border border-white-20 text-white rounded-full p-2 hover:bg-white-10 cursor-pointer transition"><i class="ph ph-pinterest-logo text-lg"></i></a>
+                  <a href="#" class="border border-white-20 text-white rounded-full p-2 hover:bg-white-10 cursor-pointer transition"><i class="ph ph-linkedin-logo text-lg"></i></a>
+               </div>
+            </div>
+
+            <div class="md:col-span-2">
+                <p class="text-xs font-bold text-brand-accent uppercase tracking-widest mb-6">Newsletter</p>
+                <div class="flex border-b border-white-20 pb-2">
+                   <input type="email" placeholder="Get design updates &amp; early access..." class="bg-transparent w-full outline-none text-white placeholder-white-40 font-light text-sm">
+                   <button class="text-xs font-bold uppercase hover:text-brand-accent transition tracking-widest">Subscribe</button>
+                </div>
+            </div>
+         </div>
+         
+         <div class="max-w-7xl mx-auto pt-8 flex flex-col md:flex-row justify-between items-center text-[10px] text-white-40 uppercase tracking-widest">
+            <div class="flex items-center gap-2 mb-4 md:mb-0">
+               <i class="ph-fill ph-lamp text-brand-accent text-sm"></i>
+               <span class="text-white font-bold">Lumina Lighting Atelier</span>
+            </div>
+            <p>© 2024 Lumina. All rights reserved.</p>
+         </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Word-by-Word Text Animation Logic
+      const animateTextElements = document.querySelectorAll('[data-animate-text]');
+      
+      animateTextElements.forEach(el => {
+        const text = el.innerText;
+        el.innerHTML = ''; 
+        
+        // Split text by words, spaces, and newlines
+        const words = text.split(/(\s+)/);
+        
+        words.forEach((word, index) => {
+          if (word === '\n') {
+            el.appendChild(document.createElement('br'));
+            return;
+          }
+          if (word.trim() === '') {
+            el.appendChild(document.createTextNode(word));
+            return;
+          }
+          const span = document.createElement('span');
+          span.innerText = word;
+          span.className = 'word-reveal';
+          // Fast staggered delay for high-end feel
+          span.style.transitionDelay = `${index * 0.04}s`;
+          el.appendChild(span);
+        });
+      });
+
+      // Intersection Observer for Scroll Animations & Text Reveal
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            if (entry.target.hasAttribute('data-animation-on-scroll')) {
+              entry.target.classList.add('animate-on-scroll-visible');
+            }
+            
+            // Trigger word reveals within this element
+            const words = entry.target.querySelectorAll('.word-reveal');
+            if (words.length > 0) {
+              words.forEach(word => word.classList.add('visible'));
+            } else if (entry.target.classList.contains('word-reveal')) {
+               entry.target.classList.add('visible');
+            }
+
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+
+      // Observe general animations
+      document.querySelectorAll('[data-animation-on-scroll]').forEach(el => {
+        el.classList.add('animate-on-scroll-hidden');
+        observer.observe(el);
+      });
+
+      // Observe text animations
+      document.querySelectorAll('[data-animate-text]').forEach(el => {
+        observer.observe(el);
+      });
+
+      // Mobile Menu Logic
+      const menuBtn = document.getElementById('menu-btn');
+      const closeMenuBtn = document.getElementById('close-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const menuLinks = document.querySelectorAll('.menu-link');
+
+      function toggleMenu() {
+        mobileMenu.classList.toggle('mobile-menu-open');
+        document.body.style.overflow = mobileMenu.classList.contains('mobile-menu-open') ? 'hidden' : '';
+      }
+
+      if (menuBtn && closeMenuBtn && mobileMenu) {
+        menuBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
+        
+        menuLinks.forEach(link => {
+            link.addEventListener('click', toggleMenu);
+        });
+      }
+    });
+  </script>
+
+
+
+    
+
+    <script id="lh-website-form-handler" data-lh-form-handler="true">
+    (function() {
+      if (window.__lhWebsiteFormHandlerInitialized) return;
+      window.__lhWebsiteFormHandlerInitialized = true;
+
+      var PROJECT_ID = "Pr5Ak4qBwhtOT47N387x";
+      var DEFAULT_SUCCESS_MESSAGE = 'Thanks. Your message has been sent.';
+      var DEFAULT_ERROR_MESSAGE = 'Could not submit the form. Please try again.';
+
+      function isLocalHostname(hostname) {
+        var normalized = String(hostname || '').trim().toLowerCase();
+        return normalized === 'localhost' || normalized === '127.0.0.1';
+      }
+
+      function readHostnameFromUrl(url) {
+        if (!url) return '';
+
+        try {
+          return String(new URL(url).hostname || '').trim().toLowerCase();
+        } catch (_) {
+          return '';
+        }
+      }
+
+      function detectApiBaseUrl() {
+        try {
+          var hostname = window.location.hostname || '';
+          if (isLocalHostname(hostname)) {
+            return 'http://localhost:8080/api';
+          }
+        } catch (_) {}
+
+        try {
+          var baseHostname = readHostnameFromUrl(document.baseURI || '');
+          if (isLocalHostname(baseHostname)) {
+            return 'http://localhost:8080/api';
+          }
+        } catch (_) {}
+
+        try {
+          var parentHostname =
+            window.parent && window.parent !== window && window.parent.location
+              ? String(window.parent.location.hostname || '').trim().toLowerCase()
+              : '';
+          if (isLocalHostname(parentHostname)) {
+            return 'http://localhost:8080/api';
+          }
+        } catch (_) {}
+
+        return 'https://api.landinghero.ai/api';
+      }
+
+      var API_BASE_URL = detectApiBaseUrl();
+
+      function getFeedbackNode(form) {
+        var feedback = form.nextElementSibling;
+        if (
+          feedback &&
+          feedback.nodeType === 1 &&
+          feedback.getAttribute('data-lh-form-feedback') === 'true'
+        ) {
+          return feedback;
+        }
+
+        feedback = document.createElement('div');
+        feedback.setAttribute('data-lh-form-feedback', 'true');
+        feedback.setAttribute('aria-live', 'polite');
+        feedback.style.marginTop = '12px';
+        feedback.style.padding = '12px 14px';
+        feedback.style.borderRadius = '10px';
+        feedback.style.fontSize = '14px';
+        feedback.style.lineHeight = '1.5';
+        feedback.style.display = 'none';
+        form.insertAdjacentElement('afterend', feedback);
+        return feedback;
+      }
+
+      function setFeedback(form, kind, message) {
+        var feedback = getFeedbackNode(form);
+        feedback.textContent = message || '';
+        feedback.style.display = message ? 'block' : 'none';
+        feedback.style.border = kind === 'success'
+          ? '1px solid rgba(16, 185, 129, 0.25)'
+          : '1px solid rgba(239, 68, 68, 0.25)';
+        feedback.style.background = kind === 'success'
+          ? 'rgba(16, 185, 129, 0.08)'
+          : 'rgba(239, 68, 68, 0.08)';
+        feedback.style.color = kind === 'success' ? '#065f46' : '#991b1b';
+      }
+
+      function isElementVisible(element) {
+        if (!element) return false;
+        if (element.type === 'hidden') return false;
+
+        try {
+          var style = window.getComputedStyle(element);
+          if (
+            style.display === 'none' ||
+            style.visibility === 'hidden' ||
+            Number(style.opacity || '1') === 0
+          ) {
+            return false;
+          }
+        } catch (_) {}
+
+        if (typeof element.getClientRects === 'function') {
+          return element.getClientRects().length > 0;
+        }
+
+        return true;
+      }
+
+      function getFieldLabel(form, element) {
+        var ariaLabel = String(element.getAttribute('aria-label') || '').trim();
+        if (ariaLabel) return ariaLabel;
+
+        var labels = element.labels;
+        if (labels && labels.length > 0) {
+          var joined = Array.prototype.map.call(labels, function(label) {
+            return String(label.textContent || '').trim();
+          }).filter(Boolean).join(' ');
+          if (joined) return joined;
+        }
+
+        var id = String(element.id || '').trim();
+        if (id) {
+          try {
+            var escapedId =
+              typeof CSS !== 'undefined' && typeof CSS.escape === 'function'
+                ? CSS.escape(id)
+                : id.replace(/"/g, '\"');
+            var explicitLabel = form.querySelector('label[for="' + escapedId + '"]');
+            if (explicitLabel) {
+              var explicitText = String(explicitLabel.textContent || '').trim();
+              if (explicitText) return explicitText;
+            }
+          } catch (_) {}
+        }
+
+        var parentLabel = typeof element.closest === 'function'
+          ? element.closest('label')
+          : null;
+        if (parentLabel) {
+          var parentText = String(parentLabel.textContent || '').trim();
+          if (parentText) return parentText;
+        }
+
+        var parentElement = element.parentElement;
+        if (parentElement) {
+          var siblingLabel = parentElement.querySelector('label');
+          if (siblingLabel) {
+            var siblingLabelText = String(siblingLabel.textContent || '').trim();
+            if (siblingLabelText) return siblingLabelText;
+          }
+        }
+
+        var previousSibling = element.previousElementSibling;
+        while (previousSibling) {
+          if (String(previousSibling.tagName || '').toLowerCase() === 'label') {
+            var previousSiblingText = String(previousSibling.textContent || '').trim();
+            if (previousSiblingText) return previousSiblingText;
+          }
+          previousSibling = previousSibling.previousElementSibling;
+        }
+
+        var placeholder = String(element.getAttribute('placeholder') || '').trim();
+        if (placeholder) return placeholder;
+
+        return String(element.name || element.id || element.type || 'field').trim();
+      }
+
+      function addDataValue(data, name, value) {
+        if (!name) return;
+
+        if (Object.prototype.hasOwnProperty.call(data, name)) {
+          if (Array.isArray(data[name])) {
+            data[name].push(value);
+          } else {
+            data[name] = [data[name], value];
+          }
+          return;
+        }
+
+        data[name] = value;
+      }
+
+      function normalizeFieldType(element) {
+        var tagName = String(element.tagName || '').toLowerCase();
+        if (tagName === 'textarea') return 'textarea';
+        if (tagName === 'select') return 'select';
+        return String(element.type || tagName || 'text').toLowerCase();
+      }
+
+      function getFieldValue(element) {
+        var type = normalizeFieldType(element);
+
+        if (type === 'checkbox' || type === 'radio') {
+          return element.checked ? 'true' : '';
+        }
+
+        if (type === 'file') {
+          if (!element.files || !element.files.length) return '';
+          return Array.prototype.map.call(element.files, function(file) {
+            return file && file.name ? file.name : '';
+          }).filter(Boolean).join(', ');
+        }
+
+        if (element.tagName && String(element.tagName).toLowerCase() === 'select' && element.multiple) {
+          return Array.prototype.map.call(element.selectedOptions || [], function(option) {
+            return option && option.value ? option.value : '';
+          }).filter(Boolean).join(', ');
+        }
+
+        return String(element.value || '').trim();
+      }
+
+      function collectFormPayload(form) {
+        var fields = [];
+        var data = {};
+        var elements = form.querySelectorAll('input, textarea, select');
+
+        Array.prototype.forEach.call(elements, function(element, index) {
+          if (!element || element.disabled) return;
+          if (!isElementVisible(element)) return;
+
+          var type = normalizeFieldType(element);
+          if (
+            type === 'submit' ||
+            type === 'button' ||
+            type === 'reset' ||
+            type === 'image'
+          ) {
+            return;
+          }
+
+          if ((type === 'checkbox' || type === 'radio') && !element.checked) {
+            return;
+          }
+
+          var value = getFieldValue(element);
+          if (!value) return;
+
+          var name = String(element.name || element.id || ('field_' + index)).trim();
+          if (!name) return;
+
+          fields.push({
+            name: name,
+            label: getFieldLabel(form, element),
+            type: type,
+            value: value
+          });
+          addDataValue(data, name, value);
+        });
+
+        return { fields: fields, data: data };
+      }
+
+      function getPageUrl() {
+        try {
+          if (window.location.href && window.location.href !== 'about:srcdoc') {
+            return window.location.href;
+          }
+        } catch (_) {}
+
+        try {
+          return String(document.baseURI || '').trim();
+        } catch (_) {
+          return '';
+        }
+      }
+
+      function setSubmittingState(form, isSubmitting) {
+        var submitControls = form.querySelectorAll(
+          'button[type="submit"], input[type="submit"], input[type="image"], [data-pixel-form-submit="true"]'
+        );
+
+        Array.prototype.forEach.call(submitControls, function(control) {
+          if (!(control instanceof HTMLElement)) return;
+
+          if (isSubmitting) {
+            if (!control.hasAttribute('data-lh-original-disabled')) {
+              control.setAttribute(
+                'data-lh-original-disabled',
+                control.hasAttribute('disabled') ? 'true' : 'false'
+              );
+            }
+            control.setAttribute('disabled', 'disabled');
+          } else if (control.getAttribute('data-lh-original-disabled') === 'false') {
+            control.removeAttribute('disabled');
+          }
+
+          if (control.tagName.toLowerCase() === 'button') {
+            if (isSubmitting) {
+              if (!control.hasAttribute('data-lh-original-label')) {
+                control.setAttribute(
+                  'data-lh-original-label',
+                  String(control.textContent || '')
+                );
+              }
+              control.textContent = 'Sending...';
+            } else if (control.hasAttribute('data-lh-original-label')) {
+              control.textContent = control.getAttribute('data-lh-original-label') || '';
+              control.removeAttribute('data-lh-original-label');
+            }
+          } else if (control.tagName.toLowerCase() === 'input') {
+            if (isSubmitting) {
+              if (!control.hasAttribute('data-lh-original-label')) {
+                control.setAttribute(
+                  'data-lh-original-label',
+                  String(control.getAttribute('value') || '')
+                );
+              }
+              control.setAttribute('value', 'Sending...');
+            } else if (control.hasAttribute('data-lh-original-label')) {
+              control.setAttribute(
+                'value',
+                control.getAttribute('data-lh-original-label') || ''
+              );
+              control.removeAttribute('data-lh-original-label');
+            }
+          }
+
+          if (!isSubmitting) {
+            control.removeAttribute('data-lh-original-disabled');
+          }
+        });
+      }
+
+      async function handleLandingHeroSubmit(payload) {
+        return fetch(API_BASE_URL + '/projects/forms/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+      }
+
+      async function handleWebhookSubmit(url, payload) {
+        return fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+      }
+
+      document.addEventListener('submit', async function(event) {
+        var form = event.target;
+        if (!(form instanceof HTMLFormElement)) return;
+        if (!PROJECT_ID) return;
+        if (form.__lhFormSubmitting) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+
+        var payload = collectFormPayload(form);
+        if (!payload.fields.length) {
+          setFeedback(form, 'error', 'Please complete the form before submitting.');
+          return;
+        }
+
+        form.__lhFormSubmitting = true;
+        setSubmittingState(form, true);
+        setFeedback(form, 'success', '');
+
+        var mode = String(form.getAttribute('data-lh-form-mode') || 'landinghero')
+          .trim()
+          .toLowerCase() === 'webhook'
+          ? 'webhook'
+          : 'landinghero';
+
+        var requestPayload = {
+          project_id: PROJECT_ID,
+          projectId: PROJECT_ID,
+          submittedAt: new Date().toISOString(),
+          pageUrl: getPageUrl(),
+          form: {
+            pixelId: String(form.getAttribute('data-pixel-id') || '').trim()
+          },
+          fields: payload.fields,
+          data: payload.data
+        };
+
+        try {
+          var response;
+
+          if (mode === 'webhook') {
+            var webhookUrl = String(form.getAttribute('data-lh-form-webhook-url') || '').trim();
+            if (!webhookUrl) {
+              throw new Error('Webhook URL is not configured for this form.');
+            }
+            response = await handleWebhookSubmit(webhookUrl, requestPayload);
+          } else {
+            requestPayload.recipientEmail = String(
+              form.getAttribute('data-lh-form-recipient-email') || ''
+            ).trim();
+            response = await handleLandingHeroSubmit(requestPayload);
+          }
+
+          if (!response.ok) {
+            var errorMessage = DEFAULT_ERROR_MESSAGE;
+            try {
+              var errorBody = await response.json();
+              if (errorBody && errorBody.error) {
+                errorMessage = String(errorBody.error);
+              }
+            } catch (_) {}
+            throw new Error(errorMessage);
+          }
+
+          setFeedback(form, 'success', DEFAULT_SUCCESS_MESSAGE);
+          form.reset();
+        } catch (error) {
+          setFeedback(
+            form,
+            'error',
+            error && error.message ? error.message : DEFAULT_ERROR_MESSAGE
+          );
+        } finally {
+          form.__lhFormSubmitting = false;
+          setSubmittingState(form, false);
+        }
+      }, true);
+    })();
+  </script>
+</body></html>
